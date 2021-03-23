@@ -10,6 +10,9 @@ import javax.swing.*;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -33,8 +36,10 @@ public class Console {
         System.out.println ("6.Delete Reservation");
         System.out.println ("7.Show all Reservations");
         System.out.println ("0.Search Movies");
-        System.out.println ("a.Search movies between time interval");
+        System.out.println ("a.Search reservations between time interval");
         System.out.println ("b.Display movies by reservation numbers");
+        System.out.println ("c.Display cards by reservation numbers");
+        System.out.println ("d.Delete reservations in date interval");
         System.out.println ("x.End program");
     }
 
@@ -64,6 +69,10 @@ public class Console {
                     this.handleSearchReservationByTime();
             } else if (option.equals("b")){
                 this.handleMoviesByReservations();
+            } else if (option.equals("c")){
+                this.handleCardsByReservations();
+            } else if (option.equals("d")){
+                this.handleDeleteReservationsFromDayInterval();
             }else if (option.equals("x")){
                 System.exit(0);
             }
@@ -71,7 +80,34 @@ public class Console {
         }
     }
 
-  /**  private void handleMoviesByReservations() throws Exception {
+    private void handleDeleteReservationsFromDayInterval() throws Exception {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
+        System.out.println("Delete Reservations from (d-MMM-yyyy): ");
+        //LocalDate newDate = dateInput(stringInput("Enter a date (like 3/3/17): "));
+        //scanner.next();
+        String date1 = scanner.next();
+        LocalDateTime dateTime1 = LocalDateTime.parse(date1,formatter);
+        System.out.println("Second hour interval (d-MMM-yyyy): ");
+        //scanner.next();
+        String date2 = scanner.next();
+        LocalDateTime dateTime2 = LocalDateTime.parse(date2, formatter);
+        this.reservationService.deleteReservationInDateInterval(dateTime1,dateTime2);
+    }
+    public static LocalDate dateInput(String userInput) {
+
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
+        LocalDate date = LocalDate.parse(userInput, dateFormat);
+
+
+        System.out.println(date);
+        return date ;
+    }
+
+    private void handleCardsByReservations() throws Exception {
+        this.reservationService.CardsByReservations();
+    }
+
+    /**  private void handleMoviesByReservations() throws Exception {
 
         Map<Movie,Integer> movies = this.reservationService.MoviesByReservations();
         Stream<Map.Entry<Movie,Integer>> sortedMap = movies.entrySet().stream().sorted(Map.Entry.comparingByValue());
@@ -94,9 +130,9 @@ public class Console {
 
     private void handleSearchReservationByTime() {
 
-        System.out.println("Search reservations made between, first  hour interval:");
+        System.out.println("First Hour interval: ");
         Integer hour1=scanner.nextInt();
-        System.out.println("and second hour interval:");
+        System.out.println("Second hour interval: ");
         Integer hour2=scanner.nextInt();
         this.reservationService.searchEntityByHourInterval(hour1,hour2);
 
@@ -141,8 +177,7 @@ public class Console {
             int movieId = scanner.nextInt();
             System.out.println ("Customer Card");
             int card = scanner.nextInt();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date date = new Date();
+            LocalDateTime date = LocalDateTime.now();
 
             this.reservationService.addReservation(id,movieId,card,date);
         } catch (Exception exception){

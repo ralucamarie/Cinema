@@ -1,5 +1,7 @@
 package Domain;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Reservation extends Entity{
@@ -7,9 +9,9 @@ public class Reservation extends Entity{
     //poate face doar dacă filmul este încă în program.
     private int idMovie;
     private int customerCard;
-    private Date dateTime;
+    private LocalDateTime dateTime;
 
-    public Reservation(int id, int idMovie, int customerCard, Date dateTime) {
+    public Reservation(int id, int idMovie, int customerCard, LocalDateTime dateTime) {
         super(id);
         this.idMovie = idMovie;
         this.customerCard = customerCard;
@@ -28,7 +30,7 @@ public class Reservation extends Entity{
         return customerCard;
     }
 
-    public Date getDateTime() {
+    public LocalDateTime getDateTime() {
         return dateTime;
     }
 

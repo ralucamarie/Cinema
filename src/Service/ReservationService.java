@@ -6,6 +6,8 @@ import Domain.ReservationValidator;
 import Repository.IRepository;
 import Repository.RepositoryException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class ReservationService {
@@ -33,7 +35,7 @@ public class ReservationService {
      * @param dateTime Date and time of the reservations.
      * @throws RepositoryException if the reservation doesn't pass the validation.
      */
-    public void addReservation (int id, int idMovie, int customerCard, Date dateTime) throws Exception {
+    public void addReservation (int id, int idMovie, int customerCard, LocalDateTime dateTime) throws Exception {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationValidator.validate(reservation,this.movieRepository);
         this.reservationRepository.create(reservation);
@@ -57,7 +59,7 @@ public class ReservationService {
      * @param dateTime of the reservation.
      * @throws RepositoryException if the id is not on the repository list.
      */
-    public void updateReservation (int id, int idMovie, int customerCard, Date dateTime) throws Exception {
+    public void updateReservation (int id, int idMovie, int customerCard, LocalDateTime dateTime) throws Exception {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationValidator.validate(reservation,this.movieRepository);
         this.reservationRepository.update(reservation);
@@ -71,7 +73,7 @@ public class ReservationService {
      * @param dateTime of the reservation.
      * @throws Exception if the reservation is not on the list.
      */
-    public void deleteReservation (int id, int idMovie, int customerCard, Date dateTime) throws Exception {
+    public void deleteReservation (int id, int idMovie, int customerCard, LocalDateTime dateTime) throws Exception {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationRepository.delete(reservation.getId());
     }
@@ -84,31 +86,43 @@ public class ReservationService {
         return this.reservationRepository.read();
     }
 
-    public void searchEntityByHourInterval(Integer hour1, Integer hour2) {
+    public void searchEntityByHourInterval(int hour1, int hour2) {
         for (Reservation reservation : this.reservationRepository.read()){
-            if ((reservation.getDateTime().getTime()>hour1)&&(reservation.getDateTime().getTime()<hour2)){
+            if ((reservation.getDateTime().getHour()>hour1)&&(reservation.getDateTime().getHour()<hour2)){
                 System.out.println(reservation.toString());
             }
         }
     }
     public void MoviesByReservations() throws Exception {
-       Map <Movie,Integer> moviesByReservations = new HashMap<>();
-        for (Reservation reservation : this.reservationRepository.read()){
-            if (!moviesByReservations.containsKey(this.movieRepository.readOne(reservation.getIdmovie()))){
+        Map<Movie, Integer> moviesByReservations = new HashMap<>();
+        for (Reservation reservation : this.reservationRepository.read()) {
+            if (!moviesByReservations.containsKey(this.movieRepository.readOne(reservation.getIdmovie()))) {
                 //Movie movieToAdd =
-                moviesByReservations.put(this.movieRepository.readOne(reservation.getIdmovie()),1);
-            }else {
-                int noOfReservations = moviesByReservations.get(this.movieRepository.readOne(reservation.getIdmovie()))+1;
-                moviesByReservations.put(this.movieRepository.readOne(reservation.getIdmovie()),noOfReservations);
+                moviesByReservations.put(this.movieRepository.readOne(reservation.getIdmovie()), 1);
+            } else {
+                int noOfReservations = moviesByReservations.get(this.movieRepository.readOne(reservation.getIdmovie())) + 1;
+                moviesByReservations.put(this.movieRepository.readOne(reservation.getIdmovie()), noOfReservations);
             }
         }
+    }
+        public void CardsByReservations() throws Exception {
+            Map <Integer,Integer> cardsByReservations = new HashMap<>();
+            for (Reservation reservation : this.reservationRepository.read()){
+                if (!cardsByReservations.containsKey(reservation.getCustomerCard())){
+                    //Movie movieToAdd =
+                    cardsByReservations.put(reservation.getCustomerCard(),1);
+                }else {
+                    int noOfReservations = cardsByReservations.get(reservation.getCustomerCard())+1;
+                    cardsByReservations.put(reservation.getCustomerCard(),noOfReservations);
+                }
+            }
 
 
-        Set <Map.Entry<Movie,Integer>> entrySet = moviesByReservations.entrySet();
-        List<Map.Entry<Movie,Integer>> list = new ArrayList<>(entrySet);
-        Collections.sort(list, new Comparator<Map.Entry<Movie, Integer>>() {
+        Set <Map.Entry<Integer,Integer>> entrySet = cardsByReservations.entrySet();
+        List<Map.Entry<Integer,Integer>> list = new ArrayList<>(entrySet);
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
             @Override
-            public int compare(Map.Entry<Movie, Integer> o1, Map.Entry<Movie, Integer> o2) {
+            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
                 return  o2.getValue().compareTo(o1.getValue());
             }
         });
@@ -119,11 +133,11 @@ public class ReservationService {
     }
 
 
-   /** private void MoviesByReservation () {
-
-    }**/
-
-
-
-
+    public void deleteReservationInDateInterval(LocalDateTime dateTime1, LocalDateTime dateTime2) throws Exception {
+        for (Reservation reservation : this.reservationRepository.read()){
+            if (reservation.getDateTime().isAfter(dateTime1)&&reservation.getDateTime().isBefore(dateTime2)){
+                this.reservationRepository.delete(reservation.getId());
+            }
+        }
+    }
 }
