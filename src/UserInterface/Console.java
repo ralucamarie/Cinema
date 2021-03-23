@@ -81,21 +81,23 @@ public class Console {
     }
 
     private void handleDeleteReservationsFromDayInterval() throws Exception {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d-MMM-yyyy");
-        System.out.println("Delete Reservations from (d-MMM-yyyy): ");
-        //LocalDate newDate = dateInput(stringInput("Enter a date (like 3/3/17): "));
-        //scanner.next();
-        String date1 = scanner.next();
-        LocalDateTime dateTime1 = LocalDateTime.parse(date1,formatter);
-        System.out.println("Second hour interval (d-MMM-yyyy): ");
-        //scanner.next();
-        String date2 = scanner.next();
-        LocalDateTime dateTime2 = LocalDateTime.parse(date2, formatter);
+        System.out.println("Delete Reservations from (dd-MMM-yyyy): ");
+       Scanner scan = new Scanner(System.in);
+        LocalDate dateTime1;
+        String date = scan.next();
+        dateTime1 = dateInput(date);
+
+        System.out.println("Second hour interval (dd-MMM-yyyy): ");
+        LocalDate dateTime2;
+        date = scan.next();
+        dateTime2 = dateInput(date);
+
+
         this.reservationService.deleteReservationInDateInterval(dateTime1,dateTime2);
     }
     public static LocalDate dateInput(String userInput) {
 
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/d/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
         LocalDate date = LocalDate.parse(userInput, dateFormat);
 
 

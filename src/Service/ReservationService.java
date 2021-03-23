@@ -133,9 +133,10 @@ public class ReservationService {
     }
 
 
-    public void deleteReservationInDateInterval(LocalDateTime dateTime1, LocalDateTime dateTime2) throws Exception {
+    public void deleteReservationInDateInterval(LocalDate dateTime1, LocalDate dateTime2) throws Exception {
         for (Reservation reservation : this.reservationRepository.read()){
-            if (reservation.getDateTime().isAfter(dateTime1)&&reservation.getDateTime().isBefore(dateTime2)){
+
+            if (reservation.getDateTime().toLocalDate().isAfter(dateTime1)&&reservation.getDateTime().toLocalDate().isBefore(dateTime2)){
                 this.reservationRepository.delete(reservation.getId());
             }
         }
