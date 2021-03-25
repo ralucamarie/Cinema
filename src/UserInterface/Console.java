@@ -73,11 +73,22 @@ public class Console {
                 this.handleCardsByReservations();
             } else if (option.equals("d")){
                 this.handleDeleteReservationsFromDayInterval();
+            } else if (option.equals("e")){
+                this.handleIncreasePrice();
             }else if (option.equals("x")){
                 System.exit(0);
             }
             
         }
+    }
+
+    private void handleIncreasePrice() {
+        System.out.println("Increase Ticket price with amount: ");
+        Scanner scan = new Scanner(System.in);
+        int amount= scan.nextInt();
+        System.out.println("for Movies with Ticket Price less than: ");
+        int lessThanTicketPrice = scan.nextInt();
+        this.movieService.increasePrice(amount, lessThanTicketPrice);
     }
 
     private void handleDeleteReservationsFromDayInterval() throws Exception {
@@ -197,7 +208,7 @@ public class Console {
     }
     
     private void handleUpdateMovie() throws Exception {
-        System.out.println ("Id of the movie you want to upate:");
+        System.out.println ("Id of the movie you want to update:");
         int id = scanner.nextInt();
         Movie movie = this.movieService.returnMovie(id);
         while (true) {

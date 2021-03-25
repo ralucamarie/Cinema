@@ -116,8 +116,6 @@ public class ReservationService {
                     cardsByReservations.put(reservation.getCustomerCard(),noOfReservations);
                 }
             }
-
-
         Set <Map.Entry<Integer,Integer>> entrySet = cardsByReservations.entrySet();
         List<Map.Entry<Integer,Integer>> list = new ArrayList<>(entrySet);
         Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {

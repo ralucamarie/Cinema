@@ -102,6 +102,12 @@ public class MovieService {
     }
 
 
-
-
+    public void increasePrice(int amount, int lessThanTicketPrice) {
+        for (Movie movie : this.movieRepository.read()){
+            if (movie.getTicketPrice()<=lessThanTicketPrice){
+                movie.setTicketPrice(movie.getTicketPrice()+amount);
+            }
+        }
+        System.out.println("Prices updated.");
+    }
 }
