@@ -40,6 +40,7 @@ public class Console {
         System.out.println ("b.Display movies by reservation numbers");
         System.out.println ("c.Display cards by reservation numbers");
         System.out.println ("d.Delete reservations in date interval");
+        System.out.println ("e.Increase Ticket Price ");
         System.out.println ("x.End program");
     }
 
