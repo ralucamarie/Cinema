@@ -104,6 +104,17 @@ public class ReservationService {
                 moviesByReservations.put(this.movieRepository.readOne(reservation.getIdmovie()), noOfReservations);
             }
         }
+        Set<Map.Entry<Movie, Integer>> entrySet = moviesByReservations.entrySet();
+        List<Map.Entry<Movie,Integer>> list = new ArrayList<>(entrySet);
+        Collections.sort(list, new Comparator<Map.Entry<Movie, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Movie, Integer> o1, Map.Entry<Movie, Integer> o2) {
+                return  o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        list.forEach(s->{
+            System.out.println(s.getKey()+"\t"+s.getValue());
+        });
     }
         public void CardsByReservations() throws Exception {
             Map <Integer,Integer> cardsByReservations = new HashMap<>();
