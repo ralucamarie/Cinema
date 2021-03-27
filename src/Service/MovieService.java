@@ -1,8 +1,6 @@
 package Service;
 
-import Domain.Movie;
-import Domain.MovieValidator;
-import Domain.Reservation;
+import Domain.*;
 import Repository.IRepository;
 import Repository.InMemoryRepository;
 import Repository.RepositoryException;
@@ -13,16 +11,18 @@ public class MovieService {
     private IRepository<Movie> movieRepository;
     private MovieValidator movieValidator;
     private IRepository<Reservation> reservationRepository;
+    private UndoRedoManager undoRedoManager;
 
     /**
      * Movie Service Constructor
      * @param movieRepository
      * @param movieValidator
      */
-    public MovieService(InMemoryRepository movieRepository, MovieValidator movieValidator, InMemoryRepository reservationRepository) {
+    public MovieService(InMemoryRepository movieRepository, MovieValidator movieValidator, InMemoryRepository reservationRepository, UndoRedoManager undoRedoManager) {
         this.movieValidator = movieValidator;
         this.movieRepository = movieRepository;
         this.reservationRepository = reservationRepository;
+        this.undoRedoManager=undoRedoManager;
     }
 
     /**
@@ -38,6 +38,7 @@ public class MovieService {
         Movie movie = new Movie (id, title, year, ticketPrice, running);
         this.movieValidator.validate(movie);
         this.movieRepository.create(movie);
+        undoRedoManager.addToUndo(new UndoRedoAddOperation<>(this.movieRepository, movie));
     }
 
     /**
@@ -53,6 +54,7 @@ public class MovieService {
         Movie movie = new Movie (id, title, year, ticketPrice, running);
         this.movieValidator.validate(movie);
         this.movieRepository.update(movie);
+        // TODO: add update undo redo operation to undoRedoManager
     }
 
     /**
@@ -78,6 +80,8 @@ public class MovieService {
     public void  deleteMovie (int id, String title, int year, Integer ticketPrice, boolean running) throws Exception {
         Movie movie = new Movie (id, title, year, ticketPrice, running);
         this.movieRepository.delete(movie.getId());
+        undoRedoManager.addToUndo(new UndoRedoDeleteOperation<>(this.movieRepository, movie));
+
     }
 
     /**

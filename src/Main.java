@@ -3,6 +3,7 @@ import Domain.ReservationValidator;
 import Repository.InMemoryRepository;
 import Service.MovieService;
 import Service.ReservationService;
+import Service.UndoRedoManager;
 import UserInterface.Console;
 
 import java.text.DateFormat;
@@ -18,9 +19,10 @@ public class Main {
         InMemoryRepository reservationRepository = new InMemoryRepository();
         MovieValidator movieValidator = new MovieValidator();
         ReservationValidator reservationValidator = new ReservationValidator();
-        MovieService movieService = new MovieService(movieRepository,movieValidator,reservationRepository);
-        ReservationService reservationService= new ReservationService(reservationRepository,movieRepository,reservationValidator);
-        Console console = new Console(movieService,reservationService);
+        UndoRedoManager undoRedoManager=new UndoRedoManager();
+        MovieService movieService = new MovieService(movieRepository,movieValidator,reservationRepository,undoRedoManager);
+        ReservationService reservationService= new ReservationService(reservationRepository,movieRepository,reservationValidator,undoRedoManager);
+        Console console = new Console(movieService,reservationService,undoRedoManager);
         //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         //Date date = new Date();
         LocalDateTime dateTime1 = LocalDateTime.of(2019,Month.MAY,12,10,20,5);

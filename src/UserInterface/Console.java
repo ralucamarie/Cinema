@@ -4,6 +4,7 @@ import Domain.Movie;
 import Domain.Reservation;
 import Service.MovieService;
 import Service.ReservationService;
+import Service.UndoRedoManager;
 
 
 import javax.swing.*;
@@ -19,12 +20,14 @@ import java.util.stream.Stream;
 public class Console {
     private MovieService movieService;
     private ReservationService reservationService;
+    private UndoRedoManager undoRedoManager;
     private Scanner scanner = new Scanner(System.in);
 
 
-    public Console(MovieService movieService, ReservationService reservationService) {
+    public Console(MovieService movieService, ReservationService reservationService, UndoRedoManager undoRedoManager) {
         this.movieService = movieService;
         this.reservationService = reservationService;
+        this.undoRedoManager=undoRedoManager;
     }
 
     private void menu (){
@@ -41,6 +44,8 @@ public class Console {
         System.out.println ("c.Display cards by reservation numbers");
         System.out.println ("d.Delete reservations in date interval");
         System.out.println ("e.Increase Ticket Price ");
+        System.out.println ("u.UNDO");
+        System.out.println ("r.REDO");
         System.out.println ("x.End program");
     }
 
@@ -76,11 +81,23 @@ public class Console {
                 this.handleDeleteReservationsFromDayInterval();
             } else if (option.equals("e")){
                 this.handleIncreasePrice();
+            } else if (option.equals("u")){
+                this.handleUndo();
+            } else if (option.equals("r")){
+                this.handleRedo();
             }else if (option.equals("x")){
                 System.exit(0);
             }
             
         }
+    }
+
+    private void handleRedo() throws Exception {
+        this.undoRedoManager.doRedo();
+    }
+
+    private void handleUndo() throws Exception {
+        this.undoRedoManager.doUndo();
     }
 
     private void handleIncreasePrice() {

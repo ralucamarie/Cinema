@@ -1,8 +1,6 @@
 package Service;
 
-import Domain.Movie;
-import Domain.Reservation;
-import Domain.ReservationValidator;
+import Domain.*;
 import Repository.IRepository;
 import Repository.RepositoryException;
 
@@ -14,6 +12,7 @@ public class ReservationService {
     private IRepository<Movie> movieRepository;
     private IRepository<Reservation> reservationRepository;
     private ReservationValidator reservationValidator;
+    private UndoRedoManager undoRedoManager;
 
     /**
      * Constructor
@@ -21,10 +20,13 @@ public class ReservationService {
      * @param movieRepository
      * @param reservationValidator
      */
-    public ReservationService(IRepository<Reservation> reservationRepository, IRepository<Movie> movieRepository, ReservationValidator reservationValidator) {
+    public ReservationService(IRepository<Reservation> reservationRepository, IRepository<Movie> movieRepository,
+                              ReservationValidator reservationValidator,
+                              UndoRedoManager undoRedoManager) {
         this.reservationRepository = reservationRepository;
         this.movieRepository = movieRepository;
         this.reservationValidator = reservationValidator;
+        this.undoRedoManager=undoRedoManager;
     }
 
     /**
@@ -39,6 +41,8 @@ public class ReservationService {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationValidator.validate(reservation,this.movieRepository);
         this.reservationRepository.create(reservation);
+        this.undoRedoManager.addToUndo(new UndoRedoAddOperation<>(this.reservationRepository, reservation));
+
     }
 
     /**
@@ -63,6 +67,7 @@ public class ReservationService {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationValidator.validate(reservation,this.movieRepository);
         this.reservationRepository.update(reservation);
+        // TODO: undoRedoManager
     }
 
     /**
@@ -76,6 +81,7 @@ public class ReservationService {
     public void deleteReservation (int id, int idMovie, int customerCard, LocalDateTime dateTime) throws Exception {
         Reservation reservation = new Reservation(id,idMovie,customerCard,dateTime);
         this.reservationRepository.delete(reservation.getId());
+        undoRedoManager.addToUndo(new UndoRedoDeleteOperation<>(this.reservationRepository, reservation));
     }
 
     /**
